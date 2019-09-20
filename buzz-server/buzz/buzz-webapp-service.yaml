@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: buzz-webapp-svc
+  name: buzz-webapp-svc
+spec:
+  ports:
+  - name: 8443-8443
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+    nodePort: 31443
+  selector:
+    app: buzz-webapp
+  sessionAffinity: None
+  type: NodePort

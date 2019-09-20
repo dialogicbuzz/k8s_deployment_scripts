@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: buzz-rtc-deployment
+  name: buzz-rtc-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: buzz-rtc
+  template:
+    metadata:
+      labels:
+        app: buzz-rtc
+    spec:
+      containers:
+      - name: buzz-rtc
+        image: dialogicbuzz/buzz-rtc:4.0.0
+        envFrom:
+        - configMapRef:
+           name: buzz-config
+        env:
+        - name: BUZZ_REDIS
+          value: "docker_sentinel"

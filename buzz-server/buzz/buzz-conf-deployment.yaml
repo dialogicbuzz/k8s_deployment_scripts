@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: buzz-conf-deployment
+  name: buzz-conf-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: buzz-conf
+  template:
+    metadata:
+      labels:
+        app: buzz-conf
+    spec:
+      containers:
+      - name: buzz-conf
+        image: dialogicbuzz/buzz-conf:4.0.0
+        envFrom:
+        - configMapRef:
+           name: buzz-config
+        env:
+        - name: BUZZ_REDIS
+          value: "docker_sentinel"
