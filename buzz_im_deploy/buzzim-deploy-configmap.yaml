@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: buzzim-deploy
+    app.kubernetes.io/version : '1.0.0'
+    app.kubernetes.io/component: im-deploy-service
+    app.kubernetes.io/part-of: buzzim
+  name: buzzim-deploy-configmap
+  namespace: buzzim-deploy
+data:
+  PORT: "11081"
+  LOG_LEVEL: "debug"
+  LOG_JSON: "no"
+  ENABLE_SWAGGER_UI: "yes"
+
+

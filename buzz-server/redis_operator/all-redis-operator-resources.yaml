@@ -18,8 +18,7 @@ spec:
     spec:
       serviceAccountName: redisoperator
       containers:
-        - image: quay.io/spotahome/redis-operator:latest
-          imagePullPolicy: IfNotPresent
+        - image: quay.io/spotahome/redis-operator
           name: app
           resources:
             limits:

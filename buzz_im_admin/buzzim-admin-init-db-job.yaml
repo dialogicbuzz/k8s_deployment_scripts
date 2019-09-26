@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: buzzim-admin
+    app.kubernetes.io/part-of: buzzim
+  name: buzzim-admin-init-db-configmap
+  namespace: buzzim-admin
+data:
+  # https://www.postgresql.org/docs/10/libpq-envars.html
+  PGHOST: "stolon-proxy-service.default.svc.cluster.local"
+  PGPORT: "5432"
+  PGUSER: "stolon"
+
+  buzzim-admin.sql: |
+    CREATE TABLE IF NOT EXISTS tenants (
+      tenant_id uuid primary key,
+      enabled boolean NOT NULL,
+      name varchar(64) NOT NULL,        /* Used as synapse server name */
+      display_name varchar(100),
+      description varchar(1000)
+    );
+
+    CREATE TABLE IF NOT EXISTS synapses (
+      tenant_id uuid references tenants(tenant_id) ON DELETE CASCADE,
+      server_name varchar(64) NOT NULL,
+      log_level varchar(10),
+      max_upload_size varchar(10),
+      report_stats boolean NOT NULL,
+      no_tls boolean NOT NULL,
+      enable_registration boolean NOT NULL,
+      registration_shared_secret text,
+      macaroon_secret_key text,
+      pg_host varchar(100) NOT NULL,
+      pg_port integer NOT NULL CHECK (pg_port > 0 AND pg_port < 65536),
+      pg_user varchar(40) NOT NULL,
+      pg_password varchar(40) NOT NULL,
+      pg_database varchar(40) NOT NULL
+    );
+
+    CREATE TYPE cert_type AS ENUM ('sandbox', 'production');
+
+    CREATE TABLE IF NOT EXISTS apns_pushers (
+      tenant_id uuid references tenants(tenant_id) ON DELETE CASCADE,
+      enabled boolean NOT NULL,
+      app_name varchar(100),
+      apns_cert text,
+      apns_cert_type cert_type,
+      CHECK ( (NOT enabled) OR
+              ((app_name IS NOT NULL) AND (apns_cert IS NOT NULL) AND (apns_cert_type IS NOT NULL)) )
+    );
+
+    CREATE TABLE IF NOT EXISTS gcm_pushers (
+      tenant_id uuid references tenants(tenant_id) ON DELETE CASCADE,
+      enabled boolean NOT NULL,
+      app_name varchar(100),
+      gcm_api_key text
+      CHECK ( (NOT enabled) OR
+              ((app_name IS NOT NULL) AND (gcm_api_key IS NOT NULL)) )
+    );
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/name: buzzim-admin
+    app.kubernetes.io/version : '1.0.0'
+    app.kubernetes.io/component: im-admin-service
+    app.kubernetes.io/part-of: buzzim
+  name: buzzim-admin-init-db-secret
+  namespace: buzzim-admin
+type: Opaque
+data:
+  # https://www.postgresql.org/docs/10/libpq-envars.html
+  PGPASSWORD:
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/name: buzzim-admin
+    app.kubernetes.io/part-of: buzzim
+  name: buzzim-admin-init-db
+  namespace: buzzim-admin
+spec:
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      containers:
+      - name: buzzim-admin-init-db
+        image: postgres:10.5-alpine
+
+        command: ["/bin/sh", "-c"]
+        args:
+        - psql --command "CREATE ROLE $BUZZIM_ADMIN_DB_USER WITH LOGIN CREATEDB CREATEROLE PASSWORD '$BUZZIM_ADMIN_DB_PASSWORD';" postgres &&
+          psql --command "CREATE DATABASE $BUZZIM_ADMIN_DB_DATABASE ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $BUZZIM_ADMIN_DB_USER;" postgres &&
+          PGUSER=$BUZZIM_ADMIN_DB_USER PGPASSWORD=$BUZZIM_ADMIN_DB_PASSWORD psql --file /buzzim-admin.sql -d $BUZZIM_ADMIN_DB_DATABASE
+        envFrom:
+        - configMapRef:
+            name: buzzim-admin-configmap
+        - secretRef:
+            name: buzzim-admin-secret
+        - configMapRef:
+            name: buzzim-admin-init-db-configmap
+        - secretRef:
+            name: buzzim-admin-init-db-secret
+
+        volumeMounts:
+          - name: config-volume
+            mountPath: /buzzim-admin.sql
+            subPath: buzzim-admin.sql
+
+      volumes:
+         - name: config-volume
+           configMap:
+             name: buzzim-admin-init-db-configmap
+
+      restartPolicy: Never

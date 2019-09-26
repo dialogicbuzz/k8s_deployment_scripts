@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: buzz-rtc
-        image: dialogicbuzz/buzz-rtc:4.0.0
+        image: dialogicbuzz/buzz-rtc:4.0.0.153
         envFrom:
         - configMapRef:
            name: buzz-config

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: buzz-conf
-        image: dialogicbuzz/buzz-conf:4.0.0
+        image: dialogicbuzz/buzz-conf:4.0.0.153
         envFrom:
         - configMapRef:
            name: buzz-config

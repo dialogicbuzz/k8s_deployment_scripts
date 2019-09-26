@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: buzzim-deploy
+    app.kubernetes.io/version : '1.0.0'
+    app.kubernetes.io/component: im-deploy-service
+    app.kubernetes.io/part-of: buzzim
+  name: buzzim-deploy
+  namespace: buzzim-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: buzzim-deploy
+
+  template:
+    metadata:
+      labels:
+        app: buzzim-deploy
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: buzzim-deploy
+        image: dialogicbuzz/buzzim-deploy:4.0.0.15
+
+        envFrom:
+        - configMapRef:
+            name: buzzim-deploy-configmap
+        - secretRef:
+            name: buzzim-deploy-secret
+        - secretRef:
+            name: buzzim-deploy-tls-secret
+            optional: true
+
+        ports:
+          - name: deploy-http
+            protocol: TCP
+            containerPort: 11081
