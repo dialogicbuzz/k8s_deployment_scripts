@@ -27,7 +27,7 @@ metadata:
 type: Opaque
 data:
   # https://www.postgresql.org/docs/10/libpq-envars.html
-  PGPASSWORD:
+  PGPASSWORD: BUZZ_IM_ADMIN_DB_PASSWORD
 
 ---
 apiVersion: batch/v1
