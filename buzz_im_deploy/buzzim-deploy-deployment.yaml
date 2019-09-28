@@ -10,7 +10,7 @@ metadata:
   name: buzzim-deploy
   namespace: buzzim-deploy
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: buzzim-deploy
