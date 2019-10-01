@@ -7,7 +7,7 @@
 
 
 YAML_DIR="."
-
+kubectl apply -f "${YAML_DIR}"/stolon-namespace.yaml
 kubectl apply -f "${YAML_DIR}"/role.yaml
 kubectl apply -f "${YAML_DIR}"/role-binding.yaml
 kubectl run -i -t stolonctl --image=dialogicbuzz/stolon --restart=Never --rm -- /usr/local/bin/stolonctl --cluster-name=kube-stolon --store-backend=kubernetes --kube-resource-kind=configmap init
