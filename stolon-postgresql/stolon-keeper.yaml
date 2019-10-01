@@ -51,7 +51,7 @@ spec:
             value: "repluser"
             # Or use a password file like in the below supersuser password
           - name: STKEEPER_PG_REPL_PASSWORD
-            value: ""
+            value: "STKEEPER_PG_REPL_PASSWORD_HERE"
           - name: STKEEPER_PG_SU_USERNAME
             value: "stolon"
           - name: STKEEPER_PG_SU_PASSWORDFILE
