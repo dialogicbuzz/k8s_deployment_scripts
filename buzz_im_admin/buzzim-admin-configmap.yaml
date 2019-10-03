@@ -14,7 +14,7 @@ data:
   LOG_LEVEL: "debug"
   LOG_JSON: "no"
   ENABLE_SWAGGER_UI: "yes"
-  BUZZIM_ADMIN_DB_HOST: "stolon-proxy-service.default.svc.cluster.local"
+  BUZZIM_ADMIN_DB_HOST: "stolon-proxy-service.stolon.svc.cluster.local"
   BUZZIM_ADMIN_DB_PORT: "5432"
   BUZZIM_ADMIN_DB_DATABASE: "buzzim_admin"
   BUZZIM_ADMIN_DB_USER: "buzzim_admin"

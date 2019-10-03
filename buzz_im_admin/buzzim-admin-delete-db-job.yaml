@@ -9,7 +9,7 @@ metadata:
   namespace: buzzim-admin
 data:
   # https://www.postgresql.org/docs/10/libpq-envars.html
-  PGHOST: "stolon-proxy-service.default.svc.cluster.local"
+  PGHOST: "stolon-proxy-service.stolon.svc.cluster.local"
   PGPORT: "5432"
   PGUSER: "stolon"
 
