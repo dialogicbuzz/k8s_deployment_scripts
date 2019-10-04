@@ -16,5 +16,5 @@ spec:
     spec:
       containers:
       - name: buzz-webapp
-        image: dialogicbuzz/buzz-webapp:4.0.0.381
+        image: dialogicbuzz/buzz-webapp:4.0.0.387
 

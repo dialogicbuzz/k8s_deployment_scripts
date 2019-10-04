@@ -24,7 +24,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: buzzim-admin
-        image: dialogicbuzz/buzzim-admin:4.0.0.64
+        image: dialogicbuzz/buzzim-admin:4.0.0.69
 
         envFrom:
         - configMapRef:
